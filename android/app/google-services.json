@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "698814104515",
+    "project_id": "mynotes-qpp",
+    "storage_bucket": "mynotes-qpp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:698814104515:android:9baf5a285b5519b6f6f376",
+        "android_client_info": {
+          "package_name": "in.pixolity.mynotes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBD3ZiFojxoffUIweR_EV2NejebaPzT4Ks"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
