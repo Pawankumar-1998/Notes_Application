@@ -31,7 +31,9 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Login"),),
+      appBar: AppBar(
+        title: const Text("Login"),
+      ),
       body: Column(
         children: [
           TextField(
@@ -39,8 +41,8 @@ class _LoginViewState extends State<LoginView> {
             enableSuggestions: false,
             autocorrect: false,
             keyboardType: TextInputType.emailAddress,
-            decoration:
-                const InputDecoration(hintText: "Enter your email address here "),
+            decoration: const InputDecoration(
+                hintText: "Enter your email address here "),
           ),
           TextField(
             controller: _password,
@@ -54,10 +56,11 @@ class _LoginViewState extends State<LoginView> {
             onPressed: () async {
               final email = _email.text;
               final password = _password.text;
-    
+
               try {
                 final userCredential = await FirebaseAuth.instance
-                    .signInWithEmailAndPassword(email: email, password: password);
+                    .signInWithEmailAndPassword(
+                        email: email, password: password);
                 print(userCredential);
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'INVALID_LOGIN_CREDENTIALS') {
@@ -70,7 +73,7 @@ class _LoginViewState extends State<LoginView> {
             },
             child: const Text("Login"),
           ),
-    
+
           // adding a new button to route to the register view
           TextButton(
               onPressed: () {
