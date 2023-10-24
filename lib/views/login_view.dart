@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as devtools show log;
 
 import 'package:mynotes/constants/routes.dart';
+import 'package:mynotes/utilities/show_error_dialog.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -61,9 +61,8 @@ class _LoginViewState extends State<LoginView> {
               final password = _password.text;
 
               try {
-                await FirebaseAuth.instance
-                    .signInWithEmailAndPassword(
-                        email: email, password: password);
+                await FirebaseAuth.instance.signInWithEmailAndPassword(
+                    email: email, password: password);
 
                 // adding the navigation code below
                 Navigator.of(context).pushNamedAndRemoveUntil(
@@ -72,11 +71,26 @@ class _LoginViewState extends State<LoginView> {
                 );
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'INVALID_LOGIN_CREDENTIALS') {
-                  devtools.log("User not found please register ");
+                  await showErrorDialog(
+                    context,
+                    "User not found please register",
+                  );
+                } else if (e.code == 'wrong password') {
+                  await showErrorDialog(
+                    context,
+                    "Wrong Password",
+                  );
                 } else {
-                  devtools.log("Something else happened ");
-                  devtools.log(e.code);
+                  await showErrorDialog(
+                    context,
+                    'Error : ${e.code}',
+                  );
                 }
+              } catch (e) {
+                await showErrorDialog(
+                  context,
+                  e.toString(),
+                );
               }
             },
             child: const Text("Login"),
@@ -94,3 +108,4 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 }
+
