@@ -1,9 +1,9 @@
 // below is the code for the registration view
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as devtools show log;
 
 import 'package:mynotes/constants/routes.dart';
+import 'package:mynotes/utilities/show_error_dialog.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -59,19 +59,44 @@ class _RegisterViewState extends State<RegisterView> {
               final email = _email.text;
               final password = _password.text;
               try {
-                final userCredential = await FirebaseAuth.instance
-                    .createUserWithEmailAndPassword(
-                        email: email, password: password);
-                devtools.log(userCredential.toString());
+                await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                  email: email,
+                  password: password,
+                );
+
+                final user = FirebaseAuth.instance.currentUser;
+                await user?.sendEmailVerification();
+                // if the compiler hits this line means user has entered a valid email and password
+                //  we need to send the user to the register view
+
+                Navigator.of(context).pushNamed(verifyEmailRoute);
               } on FirebaseAuthException catch (e) {
                 if (e.code == "weak password") {
-                  devtools
-                      .log("Password must contain more than six charecters");
+                  await showErrorDialog(
+                    context,
+                    "weak password",
+                  );
                 } else if (e.code == 'email-already-in-use') {
-                  devtools.log('the email is already registered please login ');
+                  await showErrorDialog(
+                    context,
+                    "email-already-in-use",
+                  );
                 } else if (e.code == 'invalid-email') {
-                  devtools.log('Please enter a valid email address');
+                  await showErrorDialog(
+                    context,
+                    "Please enter  valid email address",
+                  );
+                } else {
+                  await showErrorDialog(
+                    context,
+                    "Error : ${e.code}",
+                  );
                 }
+              } catch (e) {
+                await showErrorDialog(
+                  context,
+                  e.toString(),
+                );
               }
             },
             child: const Text("Register"),
@@ -83,7 +108,7 @@ class _RegisterViewState extends State<RegisterView> {
                 Navigator.of(context)
                     .pushNamedAndRemoveUntil(loginRoute, (route) => false);
               },
-              child: const Text("Already registered login "))
+              child: const Text("Already registered? login "))
         ],
       ),
     );
