@@ -1,4 +1,6 @@
 //  this file is were we abstract all the firebase operations
+import 'package:firebase_core/firebase_core.dart';
+import 'package:mynotes/firebase_options.dart';
 import 'package:mynotes/services/auth/auth_provider.dart';
 import 'package:mynotes/services/auth/auth_exception.dart';
 import 'package:mynotes/services/auth/auth_user.dart';
@@ -44,6 +46,8 @@ class FireBaseAuthProvider implements AuthProvider {
   }
 
 //  this below function gets the user from the firebase and hides the actual firebase user and kind of copies the user details into our own user
+
+  /// this is the contract that the firebasauth took it creates it user and get's merged in the custume we designed 
   @override
   AuthUser? get currentUser {
     final user = FirebaseAuth.instance.currentUser;
@@ -102,5 +106,12 @@ class FireBaseAuthProvider implements AuthProvider {
     } else {
       throw UserNotFoundAuthException();
     }
+  }
+
+  @override
+  Future<void> initialize() async {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   }
 }
