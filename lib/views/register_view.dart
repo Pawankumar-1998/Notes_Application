@@ -67,6 +67,7 @@ class _RegisterViewState extends State<RegisterView> {
                 await AuthService.firebase().sendEmailVerification();
                 // if the compiler hits this line means user has entered a valid email and password
                 //  we need to send the user to the register view
+                if (!mounted) return;
                 Navigator.of(context).pushNamed(verifyEmailRoute);
               } on WeakPasswordAuthException{
                 await showErrorDialog(
