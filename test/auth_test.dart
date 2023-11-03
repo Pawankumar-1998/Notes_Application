@@ -83,9 +83,11 @@ class NotInitializedException implements Exception {}
 
 //  creating a dummy Auth provider
 class MockAuthProvider implements AuthProvider {
-  AuthUser? _user;
+  AuthUser? _user; // as this is a fake auth provider we are just faking a user bu setting the auth user to NULL
   var _isInitialized = false;
   bool get isInitialized => _isInitialized;
+
+
   @override
   Future<AuthUser> createUser({
     required String email,
