@@ -83,10 +83,10 @@ class NotInitializedException implements Exception {}
 
 //  creating a dummy Auth provider
 class MockAuthProvider implements AuthProvider {
-  AuthUser? _user; // as this is a fake auth provider we are just faking a user bu setting the auth user to NULL
+  AuthUser?
+      _user; // as this is a fake auth provider we are just faking a user bu setting the auth user to NULL
   var _isInitialized = false;
   bool get isInitialized => _isInitialized;
-
 
   @override
   Future<AuthUser> createUser({
@@ -126,7 +126,7 @@ class MockAuthProvider implements AuthProvider {
     if (!isInitialized) throw NotInitializedException();
     if (email == 'pawan@k.com') throw UserNotFoundAuthException();
     if (password == 'pawan12') throw WrongPasswordAuthException();
-    const user = AuthUser(isEmailVerified: false);
+    const user = AuthUser(isEmailVerified: false, email: 'pawan@in.com');
     _user = user;
     return Future.value(user);
   }
@@ -136,7 +136,7 @@ class MockAuthProvider implements AuthProvider {
     if (!isInitialized) throw NotInitializedException();
     final user = _user;
     if (user == null) throw UserNotFoundAuthException();
-    const newUser = AuthUser(isEmailVerified: true);
+    const newUser = AuthUser(isEmailVerified: true, email: 'pawan@in.com');
     _user = newUser;
   }
 }

@@ -50,8 +50,10 @@ class FireBaseAuthProvider implements AuthProvider {
   /// this is the contract that the firebasauth took it creates it user and get's merged in the custume we designed 
   @override
   AuthUser? get currentUser {
+    // it for getting the current user who is in the database right now
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
+      //  this is where we sent the firebase user to wrap it self into a custom user which we created 
       return AuthUser.fromFireBase(user);
     } else {
       return null;

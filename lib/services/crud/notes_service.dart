@@ -256,7 +256,7 @@ class NotesService {
     }
 
     try {
-      // this is used ot get yoor application catche directory
+      // this is used ot get your application catche directory
       final docsPath = await getApplicationCacheDirectory();
       //  you will get the db path if we join the application catch directory path and our database path
       final dbPath = join(docsPath.path, dbName);
@@ -281,7 +281,7 @@ class NotesService {
 
 // class for the user in database
 @immutable
-class DatabaseUser {
+class  DatabaseUser {
   final int id;
   final String email;
 
