@@ -74,7 +74,9 @@ class _NotesViewState extends State<NotesView> {
                 stream: _notesService.allNotes,
                 builder: (context, snapshot) {
                   switch (snapshot.connectionState) {
+                    // the waiting state is when the stream is empty as the stream/ list has one value it no more will be waiting so we need to add active
                     case ConnectionState.waiting:
+                    case ConnectionState.active:
                       return const Text("Loading the notes ...");
                     default:
                       return const CircularProgressIndicator();

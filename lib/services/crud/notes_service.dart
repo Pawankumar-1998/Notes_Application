@@ -27,6 +27,8 @@ class NotesService {
   //  add all to the stream and get from it
   Stream<List<DatabaseNote>> get allNotes => _notesStreamController.stream;
 
+//  it gets the email of the firebase user as he is already in notes view which means he is already verified and autherized by the firebase this function either gets the user if he in sqlLite or creates the user in the sql lite database
+
   Future<DatabaseUser> getOrCreateUser({required String email}) async {
     try {
       final user = await getUser(email: email);
@@ -169,6 +171,7 @@ class NotesService {
     return note;
   }
 
+//  this function is used to get the user from the sql lite database
   Future<DatabaseUser> getUser({required String email}) async {
     await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
@@ -203,6 +206,7 @@ class NotesService {
       throw UserAlreadyExists();
     }
 
+    // the insert function always return the int ( will be unique ) can be used as id of the database user
     final userId = await db.insert(userTable, {
       emailColumn: email.toLowerCase(),
     });
@@ -217,6 +221,7 @@ class NotesService {
     final deletedCount = await db
         .delete(userTable, where: 'email=?', whereArgs: [email.toLowerCase()]);
 
+    // exactly one column should be deleted as we store unique user
     if (deletedCount != 1) {
       throw CouldNotDeleteUser();
     }
@@ -281,7 +286,7 @@ class NotesService {
 
 // class for the user in database
 @immutable
-class  DatabaseUser {
+class DatabaseUser {
   final int id;
   final String email;
 
@@ -290,6 +295,7 @@ class  DatabaseUser {
     required this.email,
   });
 
+//  this constructor is used to extract the data from the map ( Row ) and asign it to the class members
   DatabaseUser.fromRow(Map<String, Object?> map)
       : id = map[idColumn] as int,
         email = map[emailColumn] as String;
@@ -351,7 +357,7 @@ const createUserTable = '''CREATE TABLE IF NOT EXISTS "user" (
               PRIMARY KEY("id" AUTOINCREMENT)
             );
       ''';
-const createNotesTable = '''CREATE TABLE "note" (
+const createNotesTable = '''CREATE TABLE IF NOT EXISTS "note" (
               "id"	INTEGER NOT NULL,
               "user_id"	INTEGER NOT NULL,
               "text"	TEXT,
