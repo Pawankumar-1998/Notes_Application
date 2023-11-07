@@ -152,13 +152,21 @@ class NotesService {
       throw CouldNotFindUser();
     }
 
+
     // this for the creating the notes
     const text = '';
+
+    ///
+    ///
+    ///
+    ///
+
     final noteId = await db.insert(noteTable, {
-      userIdColumn: owner.id,
-      text: text,
+      userIDColumn: owner.id,
+      textColumn: text,
       isSyncedWithCloudColumn: 1,
     });
+
 
     final note = DatabaseNote(
         id: noteId, userId: owner.id, text: text, isSyncedWithCloud: true);
@@ -273,7 +281,7 @@ class NotesService {
       await db.execute(createUserTable);
 
       // create a notes table if doesn't exist
-      await db.execute(createNotesTable);
+      await db.execute(createNoteTable);
       //  as soon as the db is opened and the tables are created add all the notes to the cached file
       await _cacheNote();
 
@@ -326,7 +334,7 @@ class DatabaseNote {
 
   DatabaseNote.fromRow(Map<String, Object?> map)
       : id = map[idColumn] as int,
-        userId = map[userIdColumn] as int,
+        userId = map[userIDColumn] as int,
         text = map[textColumn] as String,
         isSyncedWithCloud =
             (map[isSyncedWithCloudColumn] as int) == 1 ? true : false;
@@ -342,27 +350,24 @@ class DatabaseNote {
   int get hashCode => id.hashCode;
 }
 
-// constants for the file
 const dbName = 'notes.db';
 const noteTable = 'note';
 const userTable = 'user';
 const idColumn = 'id';
 const emailColumn = 'email';
-const userIdColumn = 'user_id';
+const userIDColumn = 'user_id';
 const textColumn = 'text';
 const isSyncedWithCloudColumn = 'is_synced_with_cloud';
 const createUserTable = '''CREATE TABLE IF NOT EXISTS "user" (
-              "id"	INTEGER NOT NULL,
-              "email"	TEXT NOT NULL UNIQUE,
-              PRIMARY KEY("id" AUTOINCREMENT)
-            );
-      ''';
-const createNotesTable = '''CREATE TABLE IF NOT EXISTS "note" (
-              "id"	INTEGER NOT NULL,
-              "user_id"	INTEGER NOT NULL,
-              "text"	TEXT,
-              "is_synced_with_cloud"	INTEGER DEFAULT 0,
-              PRIMARY KEY("id" AUTOINCREMENT),
-              FOREIGN KEY("user_id") REFERENCES "user"("id")
-            );
-      ''';
+        "id"	INTEGER NOT NULL,
+        "email"	TEXT NOT NULL UNIQUE,
+        PRIMARY KEY("id" AUTOINCREMENT)
+      );''';
+const createNoteTable = '''CREATE TABLE IF NOT EXISTS "note" (
+        "id"	INTEGER NOT NULL,
+        "user_id"	INTEGER NOT NULL,
+        "text"	TEXT,
+        "is_synced_with_cloud"	INTEGER NOT NULL DEFAULT 0,
+        FOREIGN KEY("user_id") REFERENCES "user"("id"),
+        PRIMARY KEY("id" AUTOINCREMENT)
+      );''';
