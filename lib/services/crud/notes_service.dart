@@ -16,13 +16,18 @@ class NotesService {
   List<DatabaseNote> _notes = [];
 
   static final NotesService _shared = NotesService._sharedInstance();
-  NotesService._sharedInstance();
+  NotesService._sharedInstance() {
+    _notesStreamController = StreamController.broadcast(
+      onListen: () {
+        _notesStreamController.sink.add(_notes);
+      },
+    );
+  }
   factory NotesService() => _shared;
 
   //  this is a stream controller that controls the list of the notes
 
-  final _notesStreamController =
-      StreamController<List<DatabaseNote>>.broadcast();
+  late final StreamController<List<DatabaseNote>> _notesStreamController;
 
   //  add all to the stream and get from it
   Stream<List<DatabaseNote>> get allNotes => _notesStreamController.stream;
@@ -57,8 +62,8 @@ class NotesService {
     final db = _getDatabaseOrThrow();
 
     await getNotes(id: note.id);
-
-    final updateCount = await db.update(userTable, {
+//  changed the noteTable here
+    final updateCount = await db.update(noteTable, {
       textColumn: text,
       isSyncedWithCloudColumn: 0,
     });
@@ -152,21 +157,13 @@ class NotesService {
       throw CouldNotFindUser();
     }
 
-
     // this for the creating the notes
     const text = '';
-
-    ///
-    ///
-    ///
-    ///
-
     final noteId = await db.insert(noteTable, {
       userIDColumn: owner.id,
       textColumn: text,
       isSyncedWithCloudColumn: 1,
     });
-
 
     final note = DatabaseNote(
         id: noteId, userId: owner.id, text: text, isSyncedWithCloud: true);
