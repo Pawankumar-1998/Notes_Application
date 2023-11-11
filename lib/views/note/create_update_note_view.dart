@@ -102,6 +102,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
               case ConnectionState.done:
                 _setUpTextControllerListener();
                 return TextField(
+                  // this nelow line controller: _textController is resposible for two things it stores the text entered by the user and it also triggers the _textControllerListener() function to keep updating continouesly when the user enters the text
                   controller: _textController,
                   keyboardType: TextInputType.multiline,
                   maxLines: null,
