@@ -5,7 +5,7 @@ import 'package:mynotes/extensions/list/filter.dart';
 import 'package:mynotes/services/crud/crud_exception.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' show join;
+import 'package:path/path.dart' show join;  
 
 // this class below is the notes service that is going to talk with the database
 class NotesService {

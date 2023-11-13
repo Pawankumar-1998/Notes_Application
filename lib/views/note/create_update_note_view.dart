@@ -37,7 +37,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     }
 
     final currentUser = AuthService.firebase().currentUser!;
-    final email = currentUser.email!;
+    final email = currentUser.email;
     final owner = await _notesService.getUser(email: email);
     final newNote = await _notesService.createNote(owner: owner);
     //  this lines where added to fix the bug need to understand why and how it solved
@@ -90,7 +90,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {  
     return Scaffold(
         appBar: AppBar(
           title: const Text("New Note"),
