@@ -5,7 +5,7 @@ import 'package:mynotes/enum/menu_action.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/services/cloud/cloud_note.dart';
 import 'package:mynotes/services/cloud/firebase_cloud_storage.dart';
-import 'package:mynotes/services/crud/notes_service.dart';
+// import 'package:mynotes/services/crud/notes_service.dart';
 import 'package:mynotes/utilities/dialog/logout_dialog.dart';
 import 'package:mynotes/views/note/notes_list_view.dart';
 
