@@ -1,8 +1,12 @@
 // below is the code for the registration view
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/services/auth/auth_exception.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
+import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
+import 'package:mynotes/services/auth/bloc/auth_event.dart';
+import 'package:mynotes/services/auth/bloc/auth_state.dart';
 import 'package:mynotes/utilities/dialog/error_dialog.dart';
 
 class RegisterView extends StatefulWidget {
@@ -34,74 +38,59 @@ class _RegisterViewState extends State<RegisterView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Register")),
-      body: Column(
-        children: [
-          TextField(
-            controller: _email,
-            enableSuggestions: false,
-            autocorrect: false,
-            keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(
-                hintText: "Enter your email address here "),
-          ),
-          TextField(
-            controller: _password,
-            obscureText: true,
-            enableSuggestions: false,
-            autocorrect: false,
-            decoration:
-                const InputDecoration(hintText: "Enter your password here  "),
-          ),
-          TextButton(
-            onPressed: () async {
-              final email = _email.text;
-              final password = _password.text;
-              try {
-                await AuthService.firebase().createUser(
-                  email: email,
-                  password: password,
-                );
-
-                await AuthService.firebase().sendEmailVerification();
-                // if the compiler hits this line means user has entered a valid email and password
-                //  we need to send the user to the register view
-                if (!mounted) return;
-                Navigator.of(context).pushNamed(verifyEmailRoute);
-              } on WeakPasswordAuthException{
-                await showErrorDialog(
-                    context,
-                    "weak password",
-                  );
-              } on EmailAlreadyInUseAuthException{
-                   await showErrorDialog(
-                    context,
-                    "email-already-in-use",
-                  );
-              } on InvalidEmailAuthException{
-                 await showErrorDialog(
-                    context,
-                    "Please enter valid email address",
-                  );
-              } on GenericAuthException{
-                  await showErrorDialog(
-                  context,
-                  'Failed to register',
-                );
-              }
-            },
-            child: const Text("Register"),
-          ),
-
-          // adding the button to link to the login view
-          TextButton(
-              onPressed: () {
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil(loginRoute, (route) => false);
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) async {
+        if (state is AuthStateRegistering) {
+          if (state.exception is WeakPasswordAuthException) {
+            await showErrorDialog(context, 'weak password');
+          } else if (state.exception is EmailAlreadyInUseAuthException) {
+            await showErrorDialog(context, 'Email already in use');
+          } else if (state.exception is GenericAuthException) {
+            await showErrorDialog(context, 'Registration failed');
+          } else if (state.exception is InvalidEmailAuthException) {
+            await showErrorDialog(context, 'Invalid email');
+          }
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(title: const Text("Register")),
+        body: Column(
+          children: [
+            TextField(
+              controller: _email,
+              enableSuggestions: false,
+              autocorrect: false,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(
+                  hintText: "Enter your email address here "),
+            ),
+            TextField(
+              controller: _password,
+              obscureText: true,
+              enableSuggestions: false,
+              autocorrect: false,
+              decoration:
+                  const InputDecoration(hintText: "Enter your password here  "),
+            ),
+            TextButton(
+              onPressed: () async {
+                final email = _email.text;
+                final password = _password.text;
+                context
+                    .read<AuthBloc>()
+                    .add(AuthEventRegister(email, password));
               },
-              child: const Text("Already registered? login "))
-        ],
+              child: const Text("Register"),
+            ),
+
+            // adding the button to link to the login view
+            TextButton(
+                onPressed: () {
+                  context.read<AuthBloc>().add(const AuthEventLogOut());
+                },
+                child: const Text("Already registered? login "))
+          ],
+        ),
       ),
     );
   }
