@@ -41,7 +41,8 @@ class _LoginViewState extends State<LoginView> {
       listener: (context, state) async {
         if (state is AuthStateLoggedOut) {
           if (state.exception is UserNotFoundAuthException) {
-            await showErrorDialog(context, 'user not found');
+            await showErrorDialog(
+                context, 'Cannot find a user with entered credentials !');
           } else if (state.exception is WrongPasswordAuthException) {
             await showErrorDialog(context, 'wrong-credentials');
           } else if (state.exception is GenericAuthException) {
@@ -79,6 +80,15 @@ class _LoginViewState extends State<LoginView> {
               },
               child: const Text("Login"),
             ),
+
+            // this is for the reset view
+            TextButton(
+                onPressed: () {
+                  context
+                      .read<AuthBloc>()
+                      .add(const AuthEventForgetPassoword());
+                },
+                child: const Text('Forgot password ?')),
 
             // adding a new button to route to the register view
             TextButton(

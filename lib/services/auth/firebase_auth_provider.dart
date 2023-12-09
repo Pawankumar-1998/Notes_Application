@@ -47,13 +47,13 @@ class FireBaseAuthProvider implements AuthProvider {
 
 //  this below function gets the user from the firebase and hides the actual firebase user and kind of copies the user details into our own user
 
-  /// this is the contract that the firebasauth took it creates it user and get's merged in the custume we designed 
+  /// this is the contract that the firebasauth took it creates it user and get's merged in the custume we designed
   @override
   AuthUser? get currentUser {
     // it for getting the current user who is in the database right now
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      //  this is where we sent the firebase user to wrap it self into a custom user which we created 
+      //  this is where we sent the firebase user to wrap it self into a custom user which we created
       return AuthUser.fromFireBase(user);
     } else {
       return null;
@@ -115,5 +115,23 @@ class FireBaseAuthProvider implements AuthProvider {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+  }
+
+  @override
+  Future<void> sendPasswordResetEmail({required String toEmail}) async {
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: toEmail);
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case 'firebase_auth/invalid-email':
+          throw InvalidEmailAuthException();
+        case 'firebase_auth/user-not-found':
+          throw UserNotFoundAuthException();
+        default:
+          throw GenericAuthException(); 
+      }
+    } catch (_) {
+      throw GenericAuthException();
+    }
   }
 }
