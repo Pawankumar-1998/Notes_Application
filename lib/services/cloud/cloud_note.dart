@@ -19,4 +19,6 @@ class CloudNote {
       : documentId = snapshot.id,
         ownerUserId = snapshot.data()[ownerUserIdFieldName],
         text = snapshot.data()[textFieldName];
+
+  get lastUpdated => null;
 }

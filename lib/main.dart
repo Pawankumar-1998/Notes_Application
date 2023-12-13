@@ -19,8 +19,10 @@ void main() {
 
   runApp(MaterialApp(
     title: 'Flutter Demo',
+    debugShowCheckedModeBanner: false,
     theme: ThemeData(
-      primarySwatch: Colors.blue,
+      primaryColor: Colors.black54,
+      primarySwatch: Colors.brown,
       useMaterial3: true,
     ),
     home: BlocProvider<AuthBloc>(

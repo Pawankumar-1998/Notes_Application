@@ -7,7 +7,7 @@ import 'package:mynotes/utilities/dialog/error_dialog.dart';
 import 'package:mynotes/utilities/dialog/password_reset_dialog.dart';
 
 class ForgotPasswordView extends StatefulWidget {
-  const ForgotPasswordView({super.key});
+  const ForgotPasswordView({Key? key}) : super(key: key);
 
   @override
   State<ForgotPasswordView> createState() => _ForgotPasswordViewState();
@@ -40,42 +40,54 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
           if (state.exception != null) {
             await showErrorDialog(
               context,
-              'Please check the email and make sure you have registered before ',
+              'Please check the email and make sure you have registered before',
             );
           }
         }
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Forget Password'),
+          title: const Text('Forgot Password'),
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Text(
-                  'Enter the email which you have registered with before '),
+                'Enter the email associated with your account',
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16.0),
               TextField(
                 keyboardType: TextInputType.emailAddress,
                 autocorrect: false,
                 autofocus: true,
                 controller: _controller,
-                decoration: const InputDecoration(
-                    hintText: 'Enter your email address here '),
+                decoration: InputDecoration(
+                  hintText: 'Enter your email address',
+                  prefixIcon: Icon(Icons.email),
+                  border: OutlineInputBorder(),
+                ),
               ),
+              const SizedBox(height: 16.0),
+              ElevatedButton(
+                onPressed: () {
+                  final email = _controller.text;
+                  context
+                      .read<AuthBloc>()
+                      .add(AuthEventForgetPassoword(email: email));
+                },
+                child: const Text('Send Reset Link'),
+              ),
+              const SizedBox(height: 8.0),
               TextButton(
-                  onPressed: () {
-                    final email = _controller.text;
-                    context
-                        .read<AuthBloc>()
-                        .add(AuthEventForgetPassoword(email: email));
-                  },
-                  child: const Text('Send reset link')),
-              TextButton(
-                  onPressed: () {
-                    context.read<AuthBloc>().add(const AuthEventLogOut());
-                  },
-                  child: const Text('Back to login')),
+                onPressed: () {
+                  context.read<AuthBloc>().add(const AuthEventLogOut());
+                },
+                child: const Text('Back to Login'),
+              ),
             ],
           ),
         ),
